@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">stethemCItatas</string>
+    <string name="title_home">Главная</string>
+    <string name="title_search">Поиск</string>
+    <string name="title_star">Сохранённые</string>
+</resources>
