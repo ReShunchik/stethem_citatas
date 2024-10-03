@@ -1,16 +1,18 @@
 package com.example.stethemcitatas.ui.home
 
-import DataBaseHelper
-import android.database.Cursor
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.room.util.newStringBuilder
 import com.example.stethemcitatas.databinding.FragmentHomeBinding
-import com.example.stethemcitatas.db.DbManager
-import com.example.stethemcitatas.db.DbName
+import com.example.stethemcitatas.db.Quote
+import com.example.stethemcitatas.db.QuoteDataBase
+import kotlinx.coroutines.launch
+
 
 class HomeFragment : Fragment() {
 
@@ -19,29 +21,30 @@ class HomeFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private lateinit var dbHelper: DataBaseHelper
-
+    private lateinit var db: QuoteDataBase
+    private lateinit var textView: TextView
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        return binding.root
+    }
 
-        dbHelper = DataBaseHelper(requireContext())
-        dbHelper.openDatabase()
-        val cursor: Cursor = dbHelper.readableDatabase.rawQuery("SELECT * FROM ${DbName.TABLE_NAME}", null)
-        if (cursor.moveToNext()) {
-            val name = cursor.getString(cursor.getColumnIndexOrThrow(DbName.COLUMN_NAME_CITATA))
-            _binding!!.citataOfDay.text = name
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val application = requireNotNull(this.activity).application
+        db = QuoteDataBase.getInstance(application)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val listItems = arrayListOf<Quote>()
+            listItems.addAll(db.QuoteDao().getAll())
+            val someQuote = StringBuilder()
+            someQuote.append(listItems.get(65).quote).append("\n")
+            someQuote.append(listItems.get(198).quote)
+
+            binding.citataOfDay.text = someQuote
         }
-        cursor.close()
-        dbHelper.close()
-        return root
     }
 
     override fun onDestroyView() {
