@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_star"
-        android:name="com.example.stethemcitatas.ui.notifications.StarFragment"
+        android:name="com.example.stethemcitatas.ui.saved.SavedFragment"
         android:label="@string/title_star"
-        tools:layout="@layout/fragment_star" />
+        tools:layout="@layout/fragment_saved" />
 </navigation>

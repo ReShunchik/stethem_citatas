@@ -1,13 +1,19 @@
 package com.example.stethemcitatas.ui.search
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.stethemcitatas.db.Quote
+import com.example.stethemcitatas.db.QuoteDao
 
-class SearchViewModel : ViewModel() {
+class SearchViewModel(private val dao: QuoteDao) : ViewModel() {
+    val searchQuotes = arrayListOf<Quote>()
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
+    init{
+        searchQuotes.addAll(dao.getAll())
     }
-    val text: LiveData<String> = _text
+
+    fun makeSearch(searchString: StringBuilder){
+        searchQuotes.clear()
+        val searchResults = dao.getSearchQuotes(searchString.toString())
+        searchQuotes.addAll(searchResults)
+    }
 }
